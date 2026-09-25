@@ -1,0 +1,102 @@
+[
+  {
+    "employee_id": "EMP-001",
+    "role": "Flight Software Engineer",
+    "coverage_score": 100.0,
+    "traceability_score": 0.0,
+    "verification_status": "Unsupported",
+    "total_mandatory": 21,
+    "covered_mandatory": 21,
+    "compared_items": 21
+  },
+  {
+    "employee_id": "EMP-002",
+    "role": "Avionics QA & Test Technician",
+    "coverage_score": 100.0,
+    "traceability_score": 0.0,
+    "verification_status": "Unsupported",
+    "total_mandatory": 7,
+    "covered_mandatory": 7,
+    "compared_items": 22
+  },
+  {
+    "employee_id": "EMP-003",
+    "role": "Mission Control Operations Specialist",
+    "coverage_score": 68.18,
+    "traceability_score": 0.0,
+    "verification_status": "Unsupported",
+    "total_mandatory": 22,
+    "covered_mandatory": 15,
+    "compared_items": 22
+  },
+  {
+    "employee_id": "EMP-004",
+    "role": "Airworthiness Compliance Analyst",
+    "coverage_score": 100.0,
+    "traceability_score": 0.0,
+    "verification_status": "Unsupported",
+    "total_mandatory": 6,
+    "covered_mandatory": 6,
+    "compared_items": 21
+  },
+  {
+    "employee_id": "EMP-005",
+    "role": "Cyber Security Operations Analyst",
+    "coverage_score": 100.0,
+    "traceability_score": 0.0,
+    "verification_status": "Unsupported",
+    "total_mandatory": 21,
+    "covered_mandatory": 21,
+    "compared_items": 21
+  },
+  {
+    "employee_id": "EMP-006",
+    "role": "Field Deployment Engineer",
+    "coverage_score": 100.0,
+    "traceability_score": 0.0,
+    "verification_status": "Unsupported",
+    "total_mandatory": 6,
+    "covered_mandatory": 6,
+    "compared_items": 21
+  },
+  {
+    "employee_id": "EMP-007",
+    "role": "Hardware Assembly Specialist",
+    "coverage_score": 100.0,
+    "traceability_score": 0.0,
+    "verification_status": "Unsupported",
+    "total_mandatory": 20,
+    "covered_mandatory": 20,
+    "compared_items": 20
+  },
+  {
+    "employee_id": "EMP-008",
+    "role": "Customer Mission Support Lead",
+    "coverage_score": 100.0,
+    "traceability_score": 0.0,
+    "verification_status": "Unsupported",
+    "total_mandatory": 6,
+    "covered_mandatory": 6,
+    "compared_items": 20
+  },
+  {
+    "employee_id": "EMP-009",
+    "role": "Defense Procurement Specialist",
+    "coverage_score": 100.0,
+    "traceability_score": 0.0,
+    "verification_status": "Unsupported",
+    "total_mandatory": 18,
+    "covered_mandatory": 18,
+    "compared_items": 18
+  },
+  {
+    "employee_id": "EMP-010",
+    "role": "Aviation Safety & Training Officer",
+    "coverage_score": 100.0,
+    "traceability_score": 0.0,
+    "verification_status": "Unsupported",
+    "total_mandatory": 7,
+    "covered_mandatory": 7,
+    "compared_items": 21
+  }
+]
