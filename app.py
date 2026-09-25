@@ -6,7 +6,7 @@ Flask Application Entry Point
 """
 
 import os
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, send_from_directory
 from dotenv import load_dotenv
 
 from src.core.config import BASE_DIR, DB_PATH, SECRET_KEY
@@ -20,10 +20,12 @@ load_dotenv()
 
 def create_app() -> Flask:
     """Application factory for SkillSprint AI."""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
     app = Flask(
         __name__,
-        template_folder=str(BASE_DIR / "templates"),
-        static_folder=str(BASE_DIR / "static")
+        template_folder=os.path.join(base_dir, "templates"),
+        static_folder=os.path.join(base_dir, "static"),
+        static_url_path="/static"
     )
 
     app.config["SECRET_KEY"] = SECRET_KEY
@@ -32,6 +34,11 @@ def create_app() -> Flask:
     # Ensure DB is created
     if not os.path.exists(DB_PATH):
         seed_database()
+
+    # Explicit static file handler for serverless hosting (Vercel / AWS Lambda)
+    @app.route("/static/<path:filename>")
+    def serve_static(filename):
+        return send_from_directory(os.path.join(base_dir, "static"), filename)
 
     # Register Blueprints
     app.register_blueprint(auth_bp)
