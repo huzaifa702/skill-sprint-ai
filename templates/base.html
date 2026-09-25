@@ -9,7 +9,11 @@
 </head>
 <body>
   <header class="app-header">
-    <div style="display: flex; align-items: center; gap: 28px;">
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <button class="mobile-menu-btn" id="mobileNavToggle" aria-label="Toggle navigation menu" style="display: none; background: none; border: 1px solid var(--border-subtle); color: var(--text-primary); padding: 6px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 16px;">
+        &#9776;
+      </button>
+
       <a href="{{ url_for('routes.dashboard_view') if g.current_user else url_for('routes.landing_view') }}" class="brand-container" id="brandLink">
         <div class="brand-logo-3d">S</div>
         <div>
@@ -19,14 +23,14 @@
       </a>
 
       {% if g.current_user %}
-      <nav class="main-nav" aria-label="Main Navigation">
+      <nav class="main-nav" id="mainNav" aria-label="Main Navigation">
         <a href="{{ url_for('routes.dashboard_view') }}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" id="navDashboard">Dashboard</a>
         <a href="{{ url_for('routes.documents_view') }}" class="nav-link {% if active_page == 'documents' %}active{% endif %}" id="navDocuments">Documents</a>
         <a href="{{ url_for('routes.matrix_view') }}" class="nav-link {% if active_page == 'matrix' %}active{% endif %}" id="navMatrix">Requirement Matrix</a>
         <a href="{{ url_for('routes.employees_view') }}" class="nav-link {% if active_page == 'employees' %}active{% endif %}" id="navEmployees">Learners</a>
         <a href="{{ url_for('routes.review_queue_view') }}" class="nav-link {% if active_page == 'review' %}active{% endif %}" id="navReview">Review Queue</a>
         <a href="{{ url_for('routes.reports_view') }}" class="nav-link {% if active_page == 'reports' %}active{% endif %}" id="navReports">Reports</a>
-        <a href="{{ url_for('routes.security_tests_view') }}" class="nav-link {% if active_page == 'security' %}active{% endif %}" id="navSecurity">Security &amp; Defenses</a>
+        <a href="{{ url_for('routes.security_tests_view') }}" class="nav-link {% if active_page == 'security' %}active{% endif %}" id="navSecurity">Security</a>
       </nav>
       {% endif %}
     </div>

@@ -7,7 +7,33 @@ document.addEventListener("DOMContentLoaded", () => {
   init3DCardDepth();
   initTableFiltering();
   initGenerationStepper();
+  initMobileMenu();
 });
+
+/**
+ * Mobile Navigation Drawer Toggle
+ */
+function initMobileMenu() {
+  const toggleBtn = document.getElementById("mobileNavToggle");
+  const mainNav = document.getElementById("mainNav");
+  if (!toggleBtn || !mainNav) return;
+
+  toggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    mainNav.classList.toggle("mobile-open");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!mainNav.contains(e.target) && e.target !== toggleBtn) {
+      mainNav.classList.remove("mobile-open");
+    }
+  });
+
+  const links = mainNav.querySelectorAll(".nav-link");
+  links.forEach(l => l.addEventListener("click", () => {
+    mainNav.classList.remove("mobile-open");
+  }));
+}
 
 /**
  * 3D Subtle Perspective Tilt on Cards (CSS 3D Transform)
