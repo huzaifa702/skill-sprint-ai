@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}AI vs Python Comparison | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Dual-Pipeline Side-by-Side Comparison Workspace</h1>
+    <p>Independent Python Ground-Truth Verification vs. Generative AI Structured Output</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('routes.plan_detail_view', plan_id=plan.plan_id) }}" class="btn btn-secondary">Back to Plan Explorer</a>
+    <a href="{{ url_for('routes.export_comparison_csv', plan_id=plan.plan_id) }}" class="btn btn-primary">Export Comparison (CSV)</a>
+  </div>
+</div>
+
+<!-- Comparison Summary Banner -->
+<div class="card-3d" style="margin-bottom: 24px; padding: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <div style="font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Plan Under Audit</div>
+      <h3 style="font-size: 16px; color: var(--text-primary); margin-top: 2px;">
+        {{ plan.title }} <span style="font-family: var(--font-mono); color: var(--accent-secondary);">({{ plan.plan_id }})</span>
+      </h3>
+      <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+        Learner: <strong>{{ plan.first_name }} {{ plan.last_name }}</strong> | Role: <strong>{{ plan.role_title }}</strong>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <div style="text-align: right;">
+        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Mandatory Coverage</div>
+        <div style="font-size: 22px; font-weight: 700; font-family: var(--font-mono); color: {% if plan.coverage_score == 100 %}var(--status-positive){% else %}var(--status-warning){% endif %};">
+          {{ plan.coverage_score | round(1) }}%
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Source Traceability</div>
+        <div style="font-size: 22px; font-weight: 700; font-family: var(--font-mono); color: var(--accent-secondary);">
+          {{ plan.traceability_score | round(1) }}%
+        </div>
+      </div>
+      <div>
+        {% if plan.verification_status == 'Verified' %}
+          <span class="badge badge-verified" style="font-size: 13px; padding: 6px 12px;">VERIFIED</span>
+        {% elif plan.verification_status == 'Verified with Warning' %}
+          <span class="badge badge-warning" style="font-size: 13px; padding: 6px 12px;">VERIFIED WITH WARNING</span>
+        {% elif plan.verification_status == 'Contradictory' %}
+          <span class="badge badge-critical" style="font-size: 13px; padding: 6px 12px;">CONTRADICTORY</span>
+        {% else %}
+          <span class="badge badge-neutral" style="font-size: 13px; padding: 6px 12px;">{{ plan.verification_status }}</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Comparison Table: Python Expected vs. GenAI Output -->
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Req Code</th>
+        <th>Ground Truth Requirement (Python Pipeline 2)</th>
+        <th>GenAI Output (Pipeline 1)</th>
+        <th>Match Status</th>
+        <th>Mandatory</th>
+        <th>Source Reference</th>
+        <th>Traceability</th>
+        <th>Disagreement Audit / Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in comparison_items %}
+      <tr class="filterable-row">
+        <td style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--accent-secondary);">
+          {{ item.requirement_code }}
+        </td>
+        <td style="max-width: 260px; font-size: 12px;">
+          <strong>{{ item.requirement_title }}</strong>
+          <div style="color: var(--text-secondary); margin-top: 2px;">{{ item.python_expected_text }}</div>
+        </td>
+        <td style="max-width: 240px; font-size: 12px;">
+          {{ item.genai_generated_text }}
+        </td>
+        <td>
+          {% if item.match_status == 'MATCH' %}
+            <span class="badge badge-verified">MATCH</span>
+          {% elif item.match_status == 'MISSING_IN_AI' %}
+            <span class="badge badge-warning">MISSING IN AI</span>
+          {% elif item.match_status == 'UNSUPPORTED_IN_AI' %}
+            <span class="badge badge-critical">UNSUPPORTED</span>
+          {% elif item.match_status == 'OUTDATED_SOURCE' %}
+            <span class="badge badge-critical">OUTDATED</span>
+          {% elif item.match_status == 'CONTRADICTION' %}
+            <span class="badge badge-critical">CONTRADICTION</span>
+          {% else %}
+            <span class="badge badge-neutral">{{ item.match_status }}</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if item.is_mandatory == 1 %}
+            <span class="badge badge-critical" style="background-color: var(--accent-primary-alpha); color: var(--accent-primary);">YES</span>
+          {% else %}
+            <span class="badge badge-neutral">OPTIONAL</span>
+          {% endif %}
+        </td>
+        <td style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-secondary);">
+          {{ item.source_document_id }} Sec {{ item.source_section_id }}
+        </td>
+        <td>
+          {% if item.traceability_status == 'Fully Traceable' %}
+            <span class="badge badge-verified">TRACEABLE</span>
+          {% else %}
+            <span class="badge badge-neutral">{{ item.traceability_status }}</span>
+          {% endif %}
+        </td>
+        <td style="font-size: 11px; color: var(--text-secondary); max-width: 220px;">
+          {% if item.disagreement_explanation %}
+            <span style="color: var(--status-warning);">{{ item.disagreement_explanation }}</span>
+          {% else %}
+            <span style="color: var(--status-positive);">Verified alignment with approved SOP.</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

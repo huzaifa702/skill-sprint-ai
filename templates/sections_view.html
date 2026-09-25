@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Sections: {{ doc.title }} | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <h1>{{ doc.title }}</h1>
+      <span class="badge badge-neutral" style="font-family: var(--font-mono);">{{ doc.active_version }}</span>
+      <span class="badge badge-verified">{{ doc.status }}</span>
+    </div>
+    <p>
+      Document Code: <strong>{{ doc.document_code }}</strong> |
+      Category: <strong>{{ doc.category }}</strong> |
+      Format: <strong>{{ doc.file_type | upper }}</strong>
+    </p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('routes.documents_view') }}" class="btn btn-secondary">Back to Documents</a>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+  <!-- Left Column: Document Sections -->
+  <div>
+    <h3 style="font-size: 15px; margin-bottom: 12px; color: var(--accent-secondary);">
+      Extracted Sections ({{ sections | length }})
+    </h3>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      {% for sec in sections %}
+      <div class="card-3d" style="padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+          <strong style="color: var(--accent-primary);">Section {{ sec.section_number }}: {{ sec.heading }}</strong>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);">{{ sec.page_reference }}</span>
+        </div>
+        <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+          {{ sec.content }}
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Right Column: Document Chunks & Source IDs -->
+  <div>
+    <h3 style="font-size: 15px; margin-bottom: 12px; color: var(--accent-primary);">
+      Traceable Chunks ({{ chunks | length }})
+    </h3>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      {% for chk in chunks %}
+      <div class="card-3d" style="padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-secondary); font-weight: 700;">
+            {{ chk.chunk_id }}
+          </span>
+          <span style="font-size: 11px; color: var(--text-muted);">~{{ chk.token_count_approx }} tokens</span>
+        </div>
+        <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">{{ chk.heading }}</div>
+        <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+          {{ chk.content }}
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

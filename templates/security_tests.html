@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Security &amp; Adversarial Defenses | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Security, Prompt Injection &amp; Adversarial Testing Console</h1>
+    <p>Live verification of competition-integrity defenses against adversarial document injection, ungrounded topics, and policy conflicts.</p>
+  </div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 20px;">
+  <!-- Security Overview Card -->
+  <div class="card-3d" style="border-left: 3px solid var(--accent-primary);">
+    <h3 style="font-size: 16px; margin-bottom: 8px;">Prompt-Separation Architecture</h3>
+    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">
+      SkillSprint AI treats uploaded document text strictly as <strong>INERT DATA</strong> enclosed within structural
+      <code>&lt;&lt;&lt;UNTRUSTED_DOCUMENT_DATA&gt;&gt;&gt;</code> isolation envelopes.
+      Even if malicious documents instruct the model to "ignore previous instructions", "override policy precedence", or "approve employee",
+      the Python Ground-Truth Pipeline remains independent and rejects any ungrounded or contradictory output.
+    </p>
+  </div>
+
+  <!-- Test Scenarios Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 16px;">
+    {% for test in security_tests %}
+    <div class="card-3d" id="test-card-{{ test.test_id }}" style="border-top: 2px solid {% if test.category == 'Prompt Injection' %}var(--status-critical){% elif test.category == 'Precedence' %}var(--accent-secondary){% else %}var(--status-warning){% endif %};">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+        <div>
+          <span class="badge badge-neutral" style="font-size: 10px;">{{ test.category }}</span>
+          <h4 style="font-size: 14px; color: var(--text-primary); margin-top: 4px;">{{ test.title }}</h4>
+        </div>
+        <span class="badge badge-verified" id="test-badge-{{ test.test_id }}">PASSED</span>
+      </div>
+
+      <div style="background-color: var(--bg-primary); border: 1px solid var(--border-subtle); padding: 10px; border-radius: var(--radius-sm); margin-bottom: 10px; font-size: 12px; font-family: var(--font-mono);">
+        <div style="color: var(--status-critical); margin-bottom: 4px;"><strong>Adversarial Input:</strong></div>
+        <div style="color: var(--text-secondary);">"{{ test.attack_input }}"</div>
+      </div>
+
+      <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5;">
+        <div><strong>Defense Mechanism:</strong> {{ test.defense_mechanism }}</div>
+        <div style="color: var(--status-positive); margin-top: 2px;"><strong>Expected Safe Behavior:</strong> {{ test.expected_behavior }}</div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 10px;">
+        <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">ID: {{ test.test_id }}</span>
+        <button class="btn btn-secondary btn-sm" onclick="executeSecurityTest('{{ test.test_id }}')">
+          Run Live Verification
+        </button>
+      </div>
+      <div id="test-result-{{ test.test_id }}" style="margin-top: 8px; font-size: 12px; display: none;"></div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+async function executeSecurityTest(testId) {
+  const resultDiv = document.getElementById(`test-result-${testId}`);
+  resultDiv.style.display = "block";
+  resultDiv.innerHTML = '<span style="color: var(--accent-primary);">Executing Python defense check...</span>';
+
+  try {
+    const res = await fetch(`/api/security/test/${testId}`, { method: "POST" });
+    const data = await res.json();
+    if (res.ok) {
+      resultDiv.innerHTML = `
+        <div style="background-color: var(--bg-elevated); padding: 8px; border-radius: 4px; border-left: 2px solid var(--status-positive); color: var(--text-primary);">
+          <strong>Result:</strong> ${data.actual_result}<br>
+          <span style="color: var(--status-positive);">✓ ${data.evidence_summary}</span>
+        </div>
+      `;
+    } else {
+      resultDiv.innerHTML = `<span style="color: var(--status-critical);">Failed: ${data.error}</span>`;
+    }
+  } catch (err) {
+    resultDiv.innerHTML = `<span style="color: var(--status-critical);">Error: ${err.message}</span>`;
+  }
+}
+</script>
+{% endblock %}

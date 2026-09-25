@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Enterprise Onboarding Intelligence Dashboard</h1>
+    <p>Real-time analytics across roles, documents, and dual-pipeline verification statuses.</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('routes.documents_view') }}" class="btn btn-secondary">Upload Document</a>
+    <a href="{{ url_for('routes.employees_view') }}" class="btn btn-primary">+ Generate Onboarding Plan</a>
+  </div>
+</div>
+
+<!-- Metrics Grid -->
+<div class="metrics-grid">
+  <div class="metric-card">
+    <span class="metric-label">Active Learners</span>
+    <div class="metric-value-container">
+      <span class="metric-value">{{ metrics.total_employees }}</span>
+      <span class="metric-sub">across 10 roles</span>
+    </div>
+  </div>
+
+  <div class="metric-card info">
+    <span class="metric-label">Approved Documents</span>
+    <div class="metric-value-container">
+      <span class="metric-value">{{ metrics.total_documents }}</span>
+      <span class="metric-sub">PDF &amp; DOCX</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <span class="metric-label">Ground Truth Requirements</span>
+    <div class="metric-value-container">
+      <span class="metric-value">{{ metrics.total_requirements }}</span>
+      <span class="metric-sub">{{ metrics.mandatory_requirements }} Mandatory</span>
+    </div>
+  </div>
+
+  <div class="metric-card warning">
+    <span class="metric-label">Review Queue Items</span>
+    <div class="metric-value-container">
+      <span class="metric-value">{{ metrics.pending_reviews }}</span>
+      <span class="metric-sub">Requires Auditor Action</span>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Onboarding Plans & Dual-Pipeline Verification -->
+<div class="card-3d" style="margin-bottom: 24px;">
+  <div class="card-header">
+    <span class="card-title">Recent Personalized Onboarding Plans &amp; Verification Status</span>
+    <a href="{{ url_for('routes.employees_view') }}" class="btn btn-secondary btn-sm">View All Learners</a>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Plan ID</th>
+          <th>Employee</th>
+          <th>Role</th>
+          <th>Coverage</th>
+          <th>Traceability</th>
+          <th>Python Verification Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for plan in recent_plans %}
+        <tr class="filterable-row">
+          <td style="font-family: var(--font-mono); font-size: 12px; color: var(--accent-secondary);">{{ plan.plan_id }}</td>
+          <td><strong>{{ plan.first_name }} {{ plan.last_name }}</strong></td>
+          <td><span class="badge badge-neutral">{{ plan.role_title }}</span></td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-family: var(--font-mono); font-weight: 700; color: {% if plan.coverage_score == 100 %}var(--status-positive){% else %}var(--status-warning){% endif %};">
+                {{ plan.coverage_score | round(1) }}%
+              </span>
+            </div>
+          </td>
+          <td>
+            <span style="font-family: var(--font-mono); color: var(--accent-secondary);">{{ plan.traceability_score | round(1) }}%</span>
+          </td>
+          <td>
+            {% if plan.verification_status == 'Verified' %}
+              <span class="badge badge-verified">VERIFIED</span>
+            {% elif plan.verification_status == 'Verified with Warning' %}
+              <span class="badge badge-warning">VERIFIED WITH WARNING</span>
+            {% elif plan.verification_status == 'Contradictory' %}
+              <span class="badge badge-critical">CONTRADICTORY</span>
+            {% elif plan.verification_status == 'Unsupported' %}
+              <span class="badge badge-critical">UNSUPPORTED</span>
+            {% else %}
+              <span class="badge badge-neutral">{{ plan.verification_status }}</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display: flex; gap: 6px;">
+              <a href="{{ url_for('routes.plan_detail_view', plan_id=plan.plan_id) }}" class="btn btn-secondary btn-sm">View Plan</a>
+              <a href="{{ url_for('routes.comparison_view', plan_id=plan.plan_id) }}" class="btn btn-secondary btn-sm" style="color: var(--accent-primary);">AI vs Python</a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">
+            No onboarding plans generated yet. Click "Generate Onboarding Plan" to run Pipeline 1 &amp; 2.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Role Competency Breakdown -->
+<div class="card-3d">
+  <div class="card-header">
+    <span class="card-title">Job Roles &amp; Mandatory Compliance Distribution</span>
+    <a href="{{ url_for('routes.matrix_view') }}" class="btn btn-secondary btn-sm">Inspect Matrix</a>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+    {% for role in roles_summary %}
+    <div style="background-color: var(--bg-elevated); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+        <strong style="color: var(--text-primary); font-size: 13px;">{{ role.title }}</strong>
+        <span class="badge badge-neutral">{{ role.code }}</span>
+      </div>
+      <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+        Department: {{ role.dept_name }}
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
+        <span>{{ role.mandatory_count }} Mandatory Reqs</span>
+        <span>{{ role.total_reqs }} Total Reqs</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

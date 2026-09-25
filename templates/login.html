@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 440px; margin: 40px auto;">
+  <div class="card-3d" style="padding: 32px; border-top: 3px solid var(--accent-primary);">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div class="brand-logo-3d" style="margin: 0 auto 12px auto; width: 44px; height: 44px; font-size: 20px;">S</div>
+      <h2 style="font-size: 20px; font-weight: 700; color: var(--text-primary);">SkillSprint AI Authentication</h2>
+      <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Role-Based Access Control</p>
+    </div>
+
+    <form action="{{ url_for('auth.login_view') }}" method="POST">
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <input type="text" id="username" name="username" class="form-input" placeholder="e.g. admin or training_mgr" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••••••" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px; margin-top: 8px;" id="loginSubmitBtn">
+        Sign In
+      </button>
+    </form>
+
+    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-subtle);">
+      <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 10px;">
+        Evaluator Quick Logins (1-Click)
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <form action="{{ url_for('auth.fast_login') }}" method="POST">
+          <input type="hidden" name="role_name" value="Administrator">
+          <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;">
+            <span>Administrator (admin)</span>
+            <span class="role-badge">Admin</span>
+          </button>
+        </form>
+        <form action="{{ url_for('auth.fast_login') }}" method="POST">
+          <input type="hidden" name="role_name" value="Training Manager">
+          <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;">
+            <span>Training Manager (training_mgr)</span>
+            <span class="role-badge">Curriculum</span>
+          </button>
+        </form>
+        <form action="{{ url_for('auth.fast_login') }}" method="POST">
+          <input type="hidden" name="role_name" value="Reviewer">
+          <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;">
+            <span>Reviewer (reviewer)</span>
+            <span class="role-badge">Auditor</span>
+          </button>
+        </form>
+        <form action="{{ url_for('auth.fast_login') }}" method="POST">
+          <input type="hidden" name="role_name" value="Employee">
+          <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;">
+            <span>Employee (employee)</span>
+            <span class="role-badge">Learner</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Review Queue | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Human Review Queue &amp; Auditor Console</h1>
+    <p>Review flagged onboarding plans, policy conflicts, and ungrounded statements. Authorized reviewers can approve, edit, or override system decisions.</p>
+  </div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px;">
+  {% for rev in review_items %}
+  <div class="card-3d" id="review-card-{{ rev.review_id }}" style="border-left: 3px solid var(--status-warning);">
+    <div class="card-header">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+          <span class="badge badge-warning" style="text-transform: uppercase;">{{ rev.flag_reason }}</span>
+          <span class="badge badge-neutral" style="font-family: var(--font-mono);">Severity: {{ rev.severity }}</span>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);">{{ rev.review_id }}</span>
+        </div>
+        <h3 style="font-size: 15px; color: var(--text-primary);">
+          Plan: {{ rev.plan_title }} (Employee: {{ rev.first_name }} {{ rev.last_name }} - {{ rev.role_title }})
+        </h3>
+      </div>
+      <div>
+        <span class="badge {% if rev.status == 'Pending' %}badge-warning{% else %}badge-verified{% endif %}">
+          {{ rev.status }}
+        </span>
+      </div>
+    </div>
+
+    <div style="background-color: var(--bg-primary); border: 1px solid var(--border-subtle); padding: 12px 14px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 13px;">
+      <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 4px;">
+        Disagreement / Flag Summary
+      </div>
+      <p style="color: var(--text-secondary); line-height: 1.4;">
+        {{ rev.flag_details or "Generated plan contains missing mandatory requirements or unverified source references requiring auditor confirmation." }}
+      </p>
+    </div>
+
+    <!-- Reviewer Override Controls -->
+    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+      <input type="text" id="review-comment-{{ rev.review_id }}" class="form-input" style="flex: 1; min-width: 260px;" placeholder="Add reviewer rationale, override justification, or guidance...">
+
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="btn btn-primary btn-sm" onclick="submitReviewDecision('{{ rev.review_id }}', 'Approve')">
+          Approve (Override)
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" style="color: var(--accent-secondary);" onclick="submitReviewDecision('{{ rev.review_id }}', 'Regenerate')">
+          Regenerate
+        </button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="submitReviewDecision('{{ rev.review_id }}', 'Reject')">
+          Reject
+        </button>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="card-3d" style="text-align: center; padding: 40px;">
+    <div style="color: var(--status-positive); font-weight: 700; font-size: 16px; margin-bottom: 6px;">
+      ✓ All Review Items Cleared
+    </div>
+    <p style="color: var(--text-secondary); font-size: 13px;">
+      No flagged plans, unresolved contradictions, or suspected hallucinations currently pending review.
+    </p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

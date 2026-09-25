@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SkillSprint AI - Enterprise Onboarding & Training Intelligence Platform with Independent Python Validation">
+  <title>{% block title %}SkillSprint AI | Enterprise Onboarding Intelligence{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header class="app-header">
+    <div style="display: flex; align-items: center; gap: 28px;">
+      <a href="{{ url_for('routes.dashboard_view') if g.current_user else url_for('routes.landing_view') }}" class="brand-container" id="brandLink">
+        <div class="brand-logo-3d">S</div>
+        <div>
+          <span class="brand-text">SkillSprint AI</span>
+          <span class="brand-badge">OnboardVerse</span>
+        </div>
+      </a>
+
+      {% if g.current_user %}
+      <nav class="main-nav" aria-label="Main Navigation">
+        <a href="{{ url_for('routes.dashboard_view') }}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" id="navDashboard">Dashboard</a>
+        <a href="{{ url_for('routes.documents_view') }}" class="nav-link {% if active_page == 'documents' %}active{% endif %}" id="navDocuments">Documents</a>
+        <a href="{{ url_for('routes.matrix_view') }}" class="nav-link {% if active_page == 'matrix' %}active{% endif %}" id="navMatrix">Requirement Matrix</a>
+        <a href="{{ url_for('routes.employees_view') }}" class="nav-link {% if active_page == 'employees' %}active{% endif %}" id="navEmployees">Learners</a>
+        <a href="{{ url_for('routes.review_queue_view') }}" class="nav-link {% if active_page == 'review' %}active{% endif %}" id="navReview">Review Queue</a>
+        <a href="{{ url_for('routes.reports_view') }}" class="nav-link {% if active_page == 'reports' %}active{% endif %}" id="navReports">Reports</a>
+        <a href="{{ url_for('routes.security_tests_view') }}" class="nav-link {% if active_page == 'security' %}active{% endif %}" id="navSecurity">Security &amp; Defenses</a>
+      </nav>
+      {% endif %}
+    </div>
+
+    <div class="user-nav-profile">
+      {% if g.current_user %}
+        <div class="user-pill" id="userProfilePill">
+          <span>{{ g.current_user.full_name }}</span>
+          <span class="role-badge">{{ g.current_user.role_name }}</span>
+        </div>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary btn-sm" id="logoutBtn">Sign Out</a>
+      {% else %}
+        <a href="{{ url_for('auth.login_view') }}" class="btn btn-primary btn-sm" id="loginHeaderBtn">Sign In</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="main-content" id="mainContent">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="margin-bottom: 20px;">
+          {% for category, message in messages %}
+            <div class="card-3d" style="padding: 12px 16px; border-left: 3px solid {% if category == 'error' %}var(--status-critical){% else %}var(--status-positive){% endif %}; margin-bottom: 8px;">
+              <strong>{{ message }}</strong>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-subtle); padding: 16px 24px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+    <div>SkillSprint AI | Theme: OnboardVerse | Category: Generative AI PowerPlay</div>
+    <div>Dual-Pipeline: Google Gemini API + Independent Python Ground-Truth Validation</div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

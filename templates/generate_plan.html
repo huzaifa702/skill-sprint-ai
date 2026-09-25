@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Onboarding Plan | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Generate Personalized Onboarding Plan</h1>
+    <p>Pipeline 1: GenAI generation grounded in approved company sources + Pipeline 2: Independent Python ground-truth verification.</p>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+  <!-- Left: Learner Profile & Mandatory Ground Truth -->
+  <div class="card-3d">
+    <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--accent-primary);">Learner Context &amp; Ground Truth</h3>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px; margin-bottom: 20px;">
+      <div><strong>Employee:</strong> {{ employee.first_name }} {{ employee.last_name }} ({{ employee.employee_id }})</div>
+      <div><strong>Role:</strong> {{ employee.role_title }}</div>
+      <div><strong>Department:</strong> {{ employee.dept_name }}</div>
+      <div><strong>Experience Level:</strong> {{ employee.experience_level }} ({{ employee.previous_experience_years }} yrs prior)</div>
+      <div><strong>Location:</strong> {{ employee.location }}</div>
+      <div><strong>Joining Date:</strong> {{ employee.joining_date }}</div>
+    </div>
+
+    <div style="font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 8px;">
+      Mandatory Requirements to Cover ({{ mandatory_reqs | length }} Total):
+    </div>
+    <div style="max-height: 280px; overflow-y: auto; background-color: var(--bg-primary); border: 1px solid var(--border-subtle); padding: 12px; border-radius: var(--radius-sm);">
+      <ul style="padding-left: 18px; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+        {% for r in mandatory_reqs %}
+        <li style="margin-bottom: 6px;">
+          <strong style="color: var(--text-primary);">[{{ r.requirement_code }}] {{ r.requirement_title }}</strong>
+          <div style="font-size: 11px; color: var(--text-muted);">Source: {{ r.document_id }} Sec {{ r.section_id }} (Due: {{ r.due_stage }})</div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Right: Execution Trigger & Live Stepper -->
+  <div>
+    <div class="card-3d" style="margin-bottom: 20px;">
+      <h3 style="font-size: 16px; margin-bottom: 12px;">Trigger Dual-Pipeline Execution</h3>
+      <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">
+        Click below to run the Gemini Generation Pipeline followed by deterministic Python Ground-Truth validation. Real-time steps will be streamed below without fake animations.
+      </p>
+
+      <button id="startGenerationBtn" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 14px;" data-employee-id="{{ employee.employee_id }}">
+        ⚡ Generate &amp; Independently Verify Onboarding Plan
+      </button>
+    </div>
+
+    <!-- Live Status Stepper Container -->
+    <div id="generationStatusContainer"></div>
+  </div>
+</div>
+{% endblock %}

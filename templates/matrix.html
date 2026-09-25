@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Role Requirement Matrix | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Role Requirement Matrix (Independent Ground Truth)</h1>
+    <p>Structured mapping of enterprise policies, SOPs, and competencies to organizational job roles.</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('routes.export_matrix_csv') }}" class="btn btn-secondary">Export Matrix (CSV)</a>
+  </div>
+</div>
+
+<!-- Matrix Workspace Filters -->
+<div class="card-3d" style="margin-bottom: 20px; padding: 16px 20px;">
+  <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+    <input type="text" id="tableSearchInput" class="form-input" style="max-width: 280px;" placeholder="Search requirement or code...">
+
+    <select class="form-select table-filter" data-filter-key="role" style="max-width: 240px;">
+      <option value="ALL">All Job Roles (10 Roles)</option>
+      {% for r in roles %}
+      <option value="{{ r.title }}" {% if selected_role == r.role_id %}selected{% endif %}>{{ r.title }}</option>
+      {% endfor %}
+    </select>
+
+    <select class="form-select table-filter" data-filter-key="mandatory" style="max-width: 170px;">
+      <option value="ALL">All Statuses</option>
+      <option value="MANDATORY">Mandatory Only</option>
+      <option value="OPTIONAL">Optional / Recommended</option>
+    </select>
+
+    <select class="form-select table-filter" data-filter-key="stage" style="max-width: 160px;">
+      <option value="ALL">All Stages</option>
+      <option value="Day 1">Day 1</option>
+      <option value="Week 1">Week 1</option>
+      <option value="Week 2">Week 2</option>
+      <option value="First 30 Days">First 30 Days</option>
+    </select>
+  </div>
+</div>
+
+<!-- Matrix Table (Matching SRS Table 1) -->
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Job Role</th>
+        <th>Category</th>
+        <th>Policy / Process Requirement</th>
+        <th>Mandatory</th>
+        <th>Priority</th>
+        <th>Due Stage</th>
+        <th>Source Doc</th>
+        <th>Section</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in matrix_items %}
+      <tr class="filterable-row"
+          data-role="{{ item.role_title }}"
+          data-mandatory="{% if item.mandatory_for_role == 1 %}MANDATORY{% else %}OPTIONAL{% endif %}"
+          data-stage="{{ item.due_stage }}">
+        <td style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--accent-secondary);">
+          {{ item.requirement_code }}
+        </td>
+        <td><strong>{{ item.role_title }}</strong></td>
+        <td><span class="badge badge-neutral">{{ item.requirement_category }}</span></td>
+        <td style="max-width: 320px; font-size: 12px; line-height: 1.4;">
+          <strong>{{ item.requirement_title }}</strong>
+          <div style="color: var(--text-secondary); margin-top: 2px;">{{ item.requirement_description }}</div>
+        </td>
+        <td>
+          {% if item.mandatory_for_role == 1 %}
+            <span class="badge badge-critical" style="background-color: var(--accent-primary-alpha); color: var(--accent-primary); border-color: rgba(199, 243, 107, 0.3);">MANDATORY</span>
+          {% else %}
+            <span class="badge badge-neutral">OPTIONAL</span>
+          {% endif %}
+        </td>
+        <td>
+          <span class="badge {% if item.role_priority == 'Critical' %}badge-critical{% else %}badge-neutral{% endif %}">
+            {{ item.role_priority }}
+          </span>
+        </td>
+        <td style="font-family: var(--font-mono); font-size: 12px;">{{ item.due_stage }}</td>
+        <td style="font-family: var(--font-mono); font-size: 12px; color: var(--accent-secondary);">{{ item.document_id }}</td>
+        <td style="font-family: var(--font-mono); font-size: 12px;">{{ item.section_id }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

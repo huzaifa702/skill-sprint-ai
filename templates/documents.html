@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Organizational Documents | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Document Processing &amp; Version Control</h1>
+    <p>Manage, upload, parse, and chunk enterprise policies, SOPs, handbooks, and compliance directives.</p>
+  </div>
+  <div class="page-actions">
+    <button class="btn btn-primary" onclick="document.getElementById('uploadModal').style.display='flex'">+ Upload Document (PDF / DOCX)</button>
+  </div>
+</div>
+
+<!-- Upload Modal -->
+<div id="uploadModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+  <div class="card-3d" style="width: 100%; max-width: 540px; background-color: var(--bg-secondary); padding: 24px; border: 1px solid var(--border-active);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h3 style="font-size: 16px;">Upload Organizational Document</h3>
+      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('uploadModal').style.display='none'">✕</button>
+    </div>
+
+    <form action="{{ url_for('routes.upload_document_view') }}" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label class="form-label" for="doc_file">Select Document (PDF or DOCX)</label>
+        <input type="file" id="doc_file" name="doc_file" class="form-input" accept=".pdf,.docx,.txt,.md" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="form-group">
+          <label class="form-label" for="doc_code">Document Code</label>
+          <input type="text" id="doc_code" name="doc_code" class="form-input" placeholder="e.g. POL-SEC-03" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="version_tag">Version Tag</label>
+          <input type="text" id="version_tag" name="version_tag" class="form-input" placeholder="e.g. v1.0 or v2.0" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="title">Document Title</label>
+        <input type="text" id="title" name="title" class="form-input" placeholder="e.g. Incident Response SOP" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="form-group">
+          <label class="form-label" for="category">Category</label>
+          <select id="category" name="category" class="form-select">
+            <option value="Policy">Policy</option>
+            <option value="SOP">Department SOP</option>
+            <option value="Handbook">Employee Handbook</option>
+            <option value="Compliance">Compliance Directive</option>
+            <option value="FAQ">FAQ</option>
+            <option value="Process Manual">Process Manual</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="dept_id">Department</label>
+          <select id="dept_id" name="dept_id" class="form-select">
+            {% for d in departments %}
+            <option value="{{ d.dept_id }}">{{ d.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('uploadModal').style.display='none'">Cancel</button>
+        <button type="submit" class="btn btn-primary">Validate &amp; Ingest</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Documents Workspace Filter & Search -->
+<div class="card-3d" style="margin-bottom: 20px; padding: 14px 20px;">
+  <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+    <input type="text" id="tableSearchInput" class="form-input" style="max-width: 320px;" placeholder="Search by title, code, category...">
+
+    <select class="form-select table-filter" data-filter-key="category" style="max-width: 180px;">
+      <option value="ALL">All Categories</option>
+      <option value="Policy">Policy</option>
+      <option value="SOP">SOP</option>
+      <option value="Compliance">Compliance</option>
+      <option value="Handbook">Handbook</option>
+      <option value="FAQ">FAQ</option>
+    </select>
+
+    <select class="form-select table-filter" data-filter-key="status" style="max-width: 160px;">
+      <option value="ALL">All Statuses</option>
+      <option value="Active">Active</option>
+      <option value="Superseded">Superseded</option>
+    </select>
+  </div>
+</div>
+
+<!-- Documents Table -->
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Document Title</th>
+        <th>Category</th>
+        <th>Version</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for doc in documents %}
+      <tr class="filterable-row" data-category="{{ doc.category }}" data-status="{{ doc.status }}">
+        <td style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-secondary);">{{ doc.document_code }}</td>
+        <td><strong>{{ doc.title }}</strong></td>
+        <td><span class="badge badge-neutral">{{ doc.category }}</span></td>
+        <td style="font-family: var(--font-mono);">{{ doc.active_version }}</td>
+        <td style="font-family: var(--font-mono); text-transform: uppercase;">{{ doc.file_type }}</td>
+        <td>
+          {% if doc.status == 'Active' %}
+            <span class="badge badge-verified">ACTIVE</span>
+          {% else %}
+            <span class="badge badge-warning">{{ doc.status }}</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('routes.document_sections_view', doc_id=doc.document_id) }}" class="btn btn-secondary btn-sm">Inspect Sections</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Onboarding Plan: {{ plan.title }} | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+      <h1>{{ plan.title }}</h1>
+      <span class="badge badge-neutral" style="font-family: var(--font-mono);">v{{ plan.plan_version }}.0</span>
+      {% if plan.verification_status == 'Verified' %}
+        <span class="badge badge-verified">VERIFIED</span>
+      {% elif plan.verification_status == 'Verified with Warning' %}
+        <span class="badge badge-warning">VERIFIED WITH WARNING</span>
+      {% elif plan.verification_status == 'Contradictory' %}
+        <span class="badge badge-critical">CONTRADICTORY</span>
+      {% elif plan.verification_status == 'Unsupported' %}
+        <span class="badge badge-critical">UNSUPPORTED</span>
+      {% else %}
+        <span class="badge badge-neutral">{{ plan.verification_status }}</span>
+      {% endif %}
+    </div>
+    <p>
+      Learner: <strong>{{ plan.first_name }} {{ plan.last_name }}</strong> |
+      Role: <strong>{{ plan.role_title }}</strong> |
+      Department: <strong>{{ plan.dept_name }}</strong> |
+      Experience: <strong>{{ plan.experience_level }}</strong>
+    </p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('routes.comparison_view', plan_id=plan.plan_id) }}" class="btn btn-primary" id="viewComparisonBtn">
+      Side-by-Side Verification Audit
+    </a>
+    <a href="{{ url_for('routes.export_plan_audit', plan_id=plan.plan_id) }}" class="btn btn-secondary">
+      Export Audit Report
+    </a>
+  </div>
+</div>
+
+<!-- Independent Validation Metrics Bar -->
+<div class="metrics-grid">
+  <div class="metric-card">
+    <span class="metric-label">Mandatory Coverage Score</span>
+    <div class="metric-value-container">
+      <span class="metric-value" style="color: {% if plan.coverage_score == 100 %}var(--status-positive){% else %}var(--status-warning){% endif %};">
+        {{ plan.coverage_score | round(1) }}%
+      </span>
+      <span class="metric-sub">{{ plan.covered_mandatory_requirements }}/{{ plan.total_mandatory_requirements }} Mandatory Reqs</span>
+    </div>
+  </div>
+
+  <div class="metric-card info">
+    <span class="metric-label">Source Traceability Score</span>
+    <div class="metric-value-container">
+      <span class="metric-value">{{ plan.traceability_score | round(1) }}%</span>
+      <span class="metric-sub">Approved Document Citations</span>
+    </div>
+  </div>
+
+  <div class="metric-card {% if plan.unsupported_items_count > 0 %}critical{% endif %}">
+    <span class="metric-label">Unsupported / Hallucinations</span>
+    <div class="metric-value-container">
+      <span class="metric-value">{{ plan.unsupported_items_count }}</span>
+      <span class="metric-sub">Ungrounded Factual Claims</span>
+    </div>
+  </div>
+
+  <div class="metric-card {% if plan.contradiction_count > 0 %}critical{% endif %}">
+    <span class="metric-label">Policy Contradictions</span>
+    <div class="metric-value-container">
+      <span class="metric-value">{{ plan.contradiction_count }}</span>
+      <span class="metric-sub">Precedence Conflicts</span>
+    </div>
+  </div>
+</div>
+
+<!-- Multi-Stage Onboarding Timeline -->
+<div style="display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px;">
+  {% for stage in stages %}
+  <a href="#stage-{{ stage.stage_id }}" class="btn btn-secondary btn-sm" style="white-space: nowrap;">
+    {{ stage.stage_name }}
+  </a>
+  {% endfor %}
+</div>
+
+<!-- Modules by Stage -->
+{% for stage in stages %}
+<div id="stage-{{ stage.stage_id }}" style="margin-bottom: 32px;">
+  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+    <h3 style="font-size: 16px; color: var(--accent-primary);">{{ stage.stage_name }}</h3>
+    <div style="height: 1px; flex: 1; background-color: var(--border-subtle);"></div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    {% for mod in stage.modules %}
+    <div class="card-3d">
+      <div class="card-header">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span class="badge badge-neutral" style="font-family: var(--font-mono);">{{ mod.module_code }}</span>
+            <strong style="font-size: 15px; color: var(--text-primary);">{{ mod.title }}</strong>
+            {% if mod.mandatory == 1 %}
+              <span class="badge badge-critical" style="background-color: var(--accent-primary-alpha); color: var(--accent-primary);">MANDATORY</span>
+            {% endif %}
+            <span class="badge badge-neutral">{{ mod.priority }} Priority</span>
+          </div>
+          <p style="font-size: 13px; color: var(--text-secondary);">{{ mod.purpose }}</p>
+        </div>
+
+        <!-- Traceability Source Badge -->
+        <div style="text-align: right;">
+          <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Approved Source Citation</div>
+          <div style="font-family: var(--font-mono); font-size: 12px; color: var(--accent-secondary); margin-top: 2px;">
+            {{ mod.source_document_id }} | Sec {{ mod.source_section_id }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Objectives -->
+      {% if mod.objectives %}
+      <div style="margin-bottom: 14px;">
+        <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Learning Objectives</div>
+        <ul style="padding-left: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+          {% for obj in mod.objectives %}
+          <li>{{ obj.objective_text }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <!-- Checklists -->
+      {% if mod.checklists %}
+      <div style="margin-bottom: 14px; background-color: var(--bg-elevated); padding: 12px; border-radius: var(--radius-sm);">
+        <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">Onboarding Checklists</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          {% for chk in mod.checklists %}
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 13px;">
+            <input type="checkbox" {% if chk.is_completed %}checked{% endif %} disabled>
+            <span>{{ chk.activity }}</span>
+            <span style="font-size: 11px; color: var(--text-muted);">Due: {{ chk.due_stage }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Practical Tasks -->
+      {% if mod.tasks %}
+      <div style="margin-bottom: 14px;">
+        <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Role-Specific Practical Tasks</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px;">
+          {% for tsk in mod.tasks %}
+          <div style="background-color: var(--bg-elevated); border: 1px solid var(--border-subtle); padding: 12px; border-radius: var(--radius-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+              <strong>{{ tsk.title }}</strong>
+              <span class="badge badge-neutral">{{ tsk.difficulty }}</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;">{{ tsk.description }}</p>
+            <div style="font-size: 11px; color: var(--text-muted);">
+              <strong>Expected Outcome:</strong> {{ tsk.expected_outcome }}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Quizzes -->
+      {% if mod.quizzes %}
+      <div>
+        <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Ground-Truth Quizzes</div>
+        {% for q in mod.quizzes %}
+        <div style="background-color: var(--bg-primary); border: 1px solid var(--border-subtle); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 8px;">
+          <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">{{ q.question_text }}</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+            {% for opt in q.options %}
+            <div style="background-color: var(--bg-elevated); padding: 4px 8px; border-radius: 3px; font-size: 12px;">
+              <strong>{{ opt.key }}:</strong> {{ opt.text }}
+            </div>
+            {% endfor %}
+          </div>
+          <div style="font-size: 11px; color: var(--status-positive);">
+            <strong>Correct Answer:</strong> Option {{ q.correct_answer }} — {{ q.explanation }}
+          </div>
+          <div style="font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
+            Verified Grounding: {{ q.source_document_id }} Sec {{ q.source_section_id }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% else %}
+    <div style="color: var(--text-muted); font-size: 12px; padding: 8px;">No modules scheduled for this stage.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

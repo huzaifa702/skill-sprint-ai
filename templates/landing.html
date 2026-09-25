@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}SkillSprint AI | OnboardVerse Intelligent Employee Onboarding{% endblock %}
+
+{% block content %}
+<div style="max-width: 1100px; margin: 20px auto;">
+  <!-- Hero Section -->
+  <div class="card-3d" style="padding: 40px; margin-bottom: 32px; background: linear-gradient(180deg, var(--bg-secondary) 0%, #151C26 100%); border-top: 2px solid var(--accent-primary);">
+    <div style="max-width: 760px;">
+      <span class="badge badge-verified" style="margin-bottom: 12px;">Generative AI PowerPlay — OnboardVerse</span>
+      <h1 style="font-size: 34px; font-weight: 800; letter-spacing: -0.03em; margin: 12px 0 16px 0; line-height: 1.2;">
+        Deterministic Ground Truth Meets Generative AI Onboarding
+      </h1>
+      <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
+        SkillSprint AI analyzes organizational documents to generate personalized, role-specific employee onboarding plans using Generative AI, then independently verifies every generated module, task, and quiz question using deterministic Python business rules.
+      </p>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <a href="{{ url_for('auth.login_view') }}" class="btn btn-primary" id="landingSignInBtn">Enter Evaluation Workspace</a>
+        <a href="#pipeline-architecture" class="btn btn-secondary">Explore Dual-Pipeline Engine</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dual-Pipeline Architecture Visual Explanation -->
+  <div id="pipeline-architecture" style="margin-bottom: 40px;">
+    <h3 style="font-size: 18px; margin-bottom: 16px; color: var(--text-primary);">Core Dual-Pipeline Architecture</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+      <div class="card-3d" style="border-top: 3px solid var(--accent-secondary);">
+        <div class="metric-label">STAGE 1</div>
+        <h4 style="margin: 8px 0; font-size: 15px;">Company Knowledge</h4>
+        <p style="font-size: 12px; color: var(--text-secondary);">
+          22 real PDF &amp; DOCX policies, SOPs, manuals, and FAQs parsed into traceable chunks with document ID, version tag, and section numbering.
+        </p>
+      </div>
+
+      <div class="card-3d" style="border-top: 3px solid var(--accent-primary);">
+        <div class="metric-label">STAGE 2</div>
+        <h4 style="margin: 8px 0; font-size: 15px;">GenAI Pipeline (Gemini)</h4>
+        <p style="font-size: 12px; color: var(--text-secondary);">
+          Structured JSON output generation with versioned prompt templates, untrusted data tags, and multi-stage learning sequencing.
+        </p>
+      </div>
+
+      <div class="card-3d" style="border-top: 3px solid var(--status-positive);">
+        <div class="metric-label">STAGE 3</div>
+        <h4 style="margin: 8px 0; font-size: 15px;">Python Ground Truth</h4>
+        <p style="font-size: 12px; color: var(--text-secondary);">
+          100% independent deterministic Python validator calculating Coverage Score, Traceability Score, Hallucinations, and Precedence.
+        </p>
+      </div>
+
+      <div class="card-3d" style="border-top: 3px solid var(--status-warning);">
+        <div class="metric-label">STAGE 4</div>
+        <h4 style="margin: 8px 0; font-size: 15px;">Verified Onboarding &amp; Review</h4>
+        <p style="font-size: 12px; color: var(--text-secondary);">
+          Side-by-side comparison, human review queue with reviewer override, adaptive recommendations, and policy update impact analysis.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instant 1-Click Role Login for Evaluators -->
+  <div class="card-3d" style="padding: 24px;">
+    <h3 style="font-size: 16px; margin-bottom: 8px;">Evaluator Fast Access — Select Persona</h3>
+    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+      Evaluate SkillSprint AI with role-based access control enabled. Click any role below for instant authorized access:
+    </p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+      <form action="{{ url_for('auth.fast_login') }}" method="POST">
+        <input type="hidden" name="role_name" value="Administrator">
+        <button type="submit" class="btn btn-secondary" style="width: 100%; text-align: left; justify-content: flex-start; padding: 12px;" id="fastLoginAdmin">
+          <div>
+            <div style="font-weight: 700; color: var(--accent-primary);">Administrator</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Full system control</div>
+          </div>
+        </button>
+      </form>
+
+      <form action="{{ url_for('auth.fast_login') }}" method="POST">
+        <input type="hidden" name="role_name" value="Training Manager">
+        <button type="submit" class="btn btn-secondary" style="width: 100%; text-align: left; justify-content: flex-start; padding: 12px;" id="fastLoginTM">
+          <div>
+            <div style="font-weight: 700; color: var(--accent-secondary);">Training Manager</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Matrix &amp; Curricula</div>
+          </div>
+        </button>
+      </form>
+
+      <form action="{{ url_for('auth.fast_login') }}" method="POST">
+        <input type="hidden" name="role_name" value="Reviewer">
+        <button type="submit" class="btn btn-secondary" style="width: 100%; text-align: left; justify-content: flex-start; padding: 12px;" id="fastLoginReviewer">
+          <div>
+            <div style="font-weight: 700; color: var(--status-warning);">Reviewer</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Audit &amp; Overrides</div>
+          </div>
+        </button>
+      </form>
+
+      <form action="{{ url_for('auth.fast_login') }}" method="POST">
+        <input type="hidden" name="role_name" value="Manager">
+        <button type="submit" class="btn btn-secondary" style="width: 100%; text-align: left; justify-content: flex-start; padding: 12px;" id="fastLoginManager">
+          <div>
+            <div style="font-weight: 700; color: var(--text-primary);">Manager</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Team tracking</div>
+          </div>
+        </button>
+      </form>
+
+      <form action="{{ url_for('auth.fast_login') }}" method="POST">
+        <input type="hidden" name="role_name" value="Employee">
+        <button type="submit" class="btn btn-secondary" style="width: 100%; text-align: left; justify-content: flex-start; padding: 12px;" id="fastLoginEmployee">
+          <div>
+            <div style="font-weight: 700; color: var(--status-positive);">Employee</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Learner workspace</div>
+          </div>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

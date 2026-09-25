@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Learners &amp; Employees | SkillSprint AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Learner Directory &amp; Onboarding Plans</h1>
+    <p>Select any employee to trigger personalized GenAI generation or inspect independent Python verification.</p>
+  </div>
+</div>
+
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Employee Name</th>
+        <th>Job Role</th>
+        <th>Department</th>
+        <th>Experience</th>
+        <th>Training Status</th>
+        <th>Active Plan</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td style="font-family: var(--font-mono); font-size: 12px; color: var(--accent-secondary);">{{ emp.employee_id }}</td>
+        <td>
+          <strong>{{ emp.first_name }} {{ emp.last_name }}</strong>
+          <div style="font-size: 11px; color: var(--text-muted);">{{ emp.email }}</div>
+        </td>
+        <td><span class="badge badge-neutral">{{ emp.role_title }}</span></td>
+        <td>{{ emp.dept_name }}</td>
+        <td><span class="badge badge-neutral">{{ emp.experience_level }}</span></td>
+        <td>
+          {% if emp.training_status == 'On Track' %}
+            <span class="badge badge-verified">ON TRACK</span>
+          {% elif emp.training_status == 'Completed' %}
+            <span class="badge badge-verified">COMPLETED</span>
+          {% elif emp.training_status == 'Requires Attention' %}
+            <span class="badge badge-warning">REQUIRES ATTENTION</span>
+          {% else %}
+            <span class="badge badge-critical">{{ emp.training_status }}</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if emp.plan_id %}
+            <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-primary);">{{ emp.plan_id }}</span>
+          {% else %}
+            <span style="font-size: 12px; color: var(--text-muted);">No plan generated</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if emp.plan_id %}
+            <div style="display: flex; gap: 6px;">
+              <a href="{{ url_for('routes.plan_detail_view', plan_id=emp.plan_id) }}" class="btn btn-secondary btn-sm">Inspect Plan</a>
+              <a href="{{ url_for('routes.comparison_view', plan_id=emp.plan_id) }}" class="btn btn-secondary btn-sm" style="color: var(--accent-primary);">AI vs Python</a>
+            </div>
+          {% else %}
+            <a href="{{ url_for('routes.generate_plan_view', employee_id=emp.employee_id) }}" class="btn btn-primary btn-sm">
+              Generate Plan
+            </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
