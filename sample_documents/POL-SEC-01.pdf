@@ -1,0 +1,59 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1238 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+50 750 Td
+(Information Security & Telemetry Data Protection Policy) '
+(Document Code: POL-SEC-01 | Version: v2.0) '
+(Organization: AeroPulse Avionics & Autonomous Systems Inc.) '
+(-------------------------------------------------------) '
+() '
+(Section 1.1: Telemetry Data Encryption & Key Management) '
+(All flight telemetry data, ground control communication links, and) '
+(command packets shall be encrypted in transit using AES-256-GCM.) '
+(Cryptographic session keys must be rotated every 24 hours. Under no) '
+(circumstances may plaintext telemetry be transmitted over public RF or) '
+(LTE channels.) '
+() '
+(Section 2.4: Telemetry Log Retention Requirements) '
+(All autonomous flight logs, command sequences, and pilot overrides) '
+(shall be archived in immutable, encrypted cold storage for a mandatory) '
+(minimum period of 7 years in compliance with FAA SMS 14 CFR Part 5.) '
+(Deletion prior to 7 years is strictly prohibited.) '
+() '
+(Section 3.2: Multi-Factor Authentication on Ground Stations) '
+(All mission controllers and flight software operators must) '
+(authenticate using hardware FIDO2 security keys and biometric MFA) '
+(before issuing motor arming commands or uploading flight trajectories.) '
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000317 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1607
+%%EOF

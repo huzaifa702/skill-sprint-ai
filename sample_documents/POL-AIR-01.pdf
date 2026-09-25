@@ -1,0 +1,52 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 803 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+50 750 Td
+(FAA Part 107 & Military Airworthiness Compliance Directive) '
+(Document Code: POL-AIR-01 | Version: v1.0) '
+(Organization: AeroPulse Avionics & Autonomous Systems Inc.) '
+(-------------------------------------------------------) '
+() '
+(Section 1.1: Remote Pilot in Command \(RPIC\) Certificate Mandate) '
+(All personnel operating or directing autonomous commercial UAV) '
+(missions must hold an active FAA Remote Pilot Certificate with a small) '
+(UAS rating under 14 CFR Part 107, supplemented by AeroPulse BVLOS Type) '
+(Qualification.) '
+() '
+(Section 2.3: Airspace Waivers & Night Operations) '
+(Night flight and operations over people require approved FAA) '
+(certificates of authorization \(COA\) and calibrated strobe visibility) '
+(exceeding 3 statute miles.) '
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000317 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1171
+%%EOF

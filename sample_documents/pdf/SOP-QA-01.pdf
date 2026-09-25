@@ -1,0 +1,53 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 889 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+50 750 Td
+(UAV Pre-Flight Physical & Sensor Calibration Checklist) '
+(Document Code: SOP-QA-01 | Version: v2.0) '
+(Organization: AeroPulse Avionics & Autonomous Systems Inc.) '
+(-------------------------------------------------------) '
+() '
+(Section 2.2: Dual Sign-Off Requirement for Pre-Flight Inspection) '
+(Every commercial UAV airframe must receive dual sign-off from both the) '
+(certified QA Test Inspector and the Lead Mission Pilot before being) '
+(cleared for taxi or autonomous takeoff. Single-operator sign-off is) '
+(invalid and grounding.) '
+() '
+(Section 3.1: Pitot Tube & IMU Calibration Tolerance) '
+(IMU drift must not exceed 0.02 degrees per second across all 3 axes) '
+(during stationary 5-minute warm-up testing. Pitot dynamic pressure) '
+(sensors must be zero-calibrated using digital differential manometers) '
+(prior to daily first flight.) '
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000317 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1257
+%%EOF
