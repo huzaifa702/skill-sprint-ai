@@ -1,0 +1,36 @@
+GENERATE AN ONBOARDING PLAN FOR THE FOLLOWING EMPLOYEE:
+
+EMPLOYEE PROFILE:
+- Employee ID: {employee_id}
+- Full Name: {employee_name}
+- Job Role: {job_role_title}
+- Department: {department}
+- Experience Level: {experience_level}
+- Previous Relevant Experience: {previous_experience_years} years
+- Location: {location}
+- Joining Date: {joining_date}
+
+MANDATORY GROUND-TRUTH REQUIREMENTS FOR THIS ROLE:
+{mandatory_requirements_context}
+
+APPROVED ORGANIZATIONAL SOURCE CONTEXT:
+{approved_sources_context}
+
+SCHEMA REQUIREMENT:
+Generate a personalized, multi-stage onboarding plan adhering strictly to the JSON schema.
+Ensure each module includes:
+- module_id (e.g. MOD-01)
+- module_title
+- purpose
+- mandatory (true/false)
+- priority (Critical, High, Medium, Low)
+- due_stage (Day 1, Week 1, Week 2, First 30 Days, First 60 Days, First 90 Days)
+- source_document_id (Must match one of the provided document codes)
+- source_section_id (Must match section from that document)
+- learning_objectives (list of strings)
+- checklists (activities with due_stage and mandatory status)
+- tasks (practical hands-on or scenario tasks with expected_outcome and completion_criteria)
+- quizzes (questions with options, correct_answer, explanation, and source citations)
+- assessments (with structured rubrics and pass criteria)
+
+Respond strictly with valid JSON.

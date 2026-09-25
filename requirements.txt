@@ -1,0 +1,11 @@
+# SkillSprint AI - Core Dependencies
+Flask==3.1.3
+google-genai==2.25.0
+pypdf==6.19.0
+python-docx==1.2.0
+pydantic==2.13.5
+pytest==9.1.1
+reportlab==5.0.1
+python-dotenv==1.2.3
+lxml==6.1.3
+cryptography==50.0.1

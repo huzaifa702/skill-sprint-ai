@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OnboardingPlanSchema",
+  "description": "SkillSprint AI Structured Onboarding Plan Schema with Source Traceability",
+  "type": "object",
+  "required": [
+    "employee_id",
+    "job_role_title",
+    "department",
+    "experience_level",
+    "plan_title",
+    "modules"
+  ],
+  "properties": {
+    "employee_id": { "type": "string" },
+    "job_role_title": { "type": "string" },
+    "department": { "type": "string" },
+    "experience_level": { "type": "string", "enum": ["Beginner", "Intermediate", "Advanced"] },
+    "plan_title": { "type": "string" },
+    "summary": { "type": "string" },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "module_id",
+          "module_title",
+          "purpose",
+          "mandatory",
+          "priority",
+          "due_stage",
+          "source_document_id",
+          "source_section_id",
+          "learning_objectives"
+        ],
+        "properties": {
+          "module_id": { "type": "string" },
+          "module_title": { "type": "string" },
+          "purpose": { "type": "string" },
+          "category": { "type": "string" },
+          "mandatory": { "type": "boolean" },
+          "priority": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] },
+          "due_stage": {
+            "type": "string",
+            "enum": ["Day 1", "Week 1", "Week 2", "First 30 Days", "First 60 Days", "First 90 Days"]
+          },
+          "source_document_id": { "type": "string" },
+          "source_section_id": { "type": "string" },
+          "estimated_duration_minutes": { "type": "integer", "minimum": 10, "maximum": 480 },
+          "completion_criteria": { "type": "string" },
+          "learning_objectives": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "checklists": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["activity", "is_mandatory", "due_stage"],
+              "properties": {
+                "activity": { "type": "string" },
+                "is_mandatory": { "type": "boolean" },
+                "due_stage": { "type": "string" },
+                "responsible_person": { "type": "string" },
+                "source_document_id": { "type": "string" },
+                "source_section_id": { "type": "string" }
+              }
+            }
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["task_code", "title", "description", "expected_outcome", "completion_criteria", "difficulty", "due_stage"],
+              "properties": {
+                "task_code": { "type": "string" },
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "expected_outcome": { "type": "string" },
+                "source_requirement_id": { "type": "string" },
+                "completion_criteria": { "type": "string" },
+                "difficulty": { "type": "string", "enum": ["Beginner", "Intermediate", "Advanced"] },
+                "due_stage": { "type": "string" },
+                "is_scenario_based": { "type": "boolean" }
+              }
+            }
+          },
+          "quizzes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["question_id", "question_type", "question_text", "options", "correct_answer", "explanation", "source_document_id", "source_section_id"],
+              "properties": {
+                "question_id": { "type": "string" },
+                "question_type": {
+                  "type": "string",
+                  "enum": ["multiple_choice", "multiple_response", "true_false", "scenario_based"]
+                },
+                "question_text": { "type": "string" },
+                "options": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "type": "object",
+                    "required": ["key", "text"],
+                    "properties": {
+                      "key": { "type": "string" },
+                      "text": { "type": "string" }
+                    }
+                  }
+                },
+                "correct_answer": { "type": "string" },
+                "explanation": { "type": "string" },
+                "difficulty": { "type": "string", "enum": ["Beginner", "Intermediate", "Advanced"] },
+                "source_document_id": { "type": "string" },
+                "source_section_id": { "type": "string" }
+              }
+            }
+          },
+          "assessments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["title", "assessment_type", "description", "pass_condition", "rubrics"],
+              "properties": {
+                "title": { "type": "string" },
+                "assessment_type": { "type": "string", "enum": ["Knowledge", "Practical", "Scenario", "Role-Specific"] },
+                "description": { "type": "string" },
+                "pass_condition": { "type": "string" },
+                "rubrics": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["criterion", "weight_percentage", "expected_performance", "pass_condition"],
+                    "properties": {
+                      "criterion": { "type": "string" },
+                      "weight_percentage": { "type": "number", "minimum": 1, "maximum": 100 },
+                      "expected_performance": { "type": "string" },
+                      "pass_condition": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

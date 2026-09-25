@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Caches and test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+env*/
+
+# Secrets and environment configurations
+.env
+.env.local
+*.pem
+*.key
+
+# SQLite runtime locks and journals
+*.db-journal
+*.db-wal
+*.db-shm
+
+# IDE and Operating System files
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+Desktop.ini
+.DS_Store
