@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: skillsprint-ai
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt && python -m src.database.seed_data && python scripts/generate_all_role_plans.py
+    startCommand: gunicorn app:app --workers 2 --bind 0.0.0.0:$PORT
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PASS_THRESHOLD
+        value: "75.0"
