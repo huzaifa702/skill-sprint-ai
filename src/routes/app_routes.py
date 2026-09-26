@@ -40,8 +40,18 @@ def load_user():
 # -------------------------------------------------------------
 @routes_bp.route("/")
 def landing_view():
-    """Render public landing page with dual-pipeline architecture explanation."""
-    return render_template("landing.html")
+    """Mandatory access gate: require password authentication before accessing the platform."""
+    if not g.current_user:
+        return redirect(url_for("auth.login_view"))
+    return redirect(url_for("routes.dashboard_view"))
+
+
+@routes_bp.route("/overview")
+@routes_bp.route("/architecture")
+@login_required
+def overview_view():
+    """Render dual-pipeline architecture explanation for authenticated users."""
+    return render_template("landing.html", active_page="overview")
 
 
 @routes_bp.route("/dashboard")

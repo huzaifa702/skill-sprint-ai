@@ -407,8 +407,22 @@ body {
   background-color: var(--bg-secondary);
 }
 
+/* Data Tables & Responsive Container */
+.table-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  box-sizing: border-box;
+}
+
 .data-table {
   width: 100%;
+  min-width: 600px;
   border-collapse: collapse;
   font-size: 13px;
   text-align: left;
@@ -696,18 +710,20 @@ body {
 
   .main-nav {
     display: none;
-    position: absolute;
+    position: fixed;
     top: var(--header-height);
     left: 0;
     right: 0;
-    background-color: var(--bg-secondary);
-    border-bottom: 2px solid var(--border-subtle);
-    box-shadow: var(--shadow-lg);
+    background-color: rgba(17, 22, 29, 0.98);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 2px solid var(--accent-primary);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85);
     flex-direction: column;
     align-items: stretch;
-    padding: 12px 16px;
-    gap: 6px;
-    z-index: 999;
+    padding: 16px 20px;
+    gap: 8px;
+    z-index: 9999;
   }
 
   .main-nav.mobile-open {
@@ -716,8 +732,8 @@ body {
   }
 
   .nav-link {
-    padding: 10px 14px;
-    font-size: 14px;
+    padding: 12px 16px;
+    font-size: 15px;
     border-radius: var(--radius-sm);
   }
 
@@ -744,6 +760,8 @@ body {
 @media (max-width: 768px) {
   .app-header {
     padding: 0 14px;
+    height: auto;
+    min-height: var(--header-height);
   }
 
   .brand-text {
@@ -775,8 +793,9 @@ body {
   }
 
   .page-actions .btn {
-    flex: 1 1 auto;
+    flex: 1 1 100%;
     text-align: center;
+    justify-content: center;
   }
 
   .metrics-grid {
@@ -794,11 +813,6 @@ body {
 
   .pipeline-stepper {
     grid-template-columns: 1fr;
-  }
-
-  .table-container {
-    border-radius: var(--radius-sm);
-    -webkit-overflow-scrolling: touch;
   }
 
   .data-table th, .data-table td {
@@ -832,13 +846,10 @@ body {
     display: none; /* Keep header clean, show logout button */
   }
 
-  .btn {
+  .page-actions .btn,
+  .form-group .btn {
     width: 100%;
     justify-content: center;
-  }
-
-  .btn-sm {
-    width: auto;
   }
 }
 
@@ -876,6 +887,7 @@ body {
         <a href="{{ url_for('routes.review_queue_view') }}" class="nav-link {% if active_page == 'review' %}active{% endif %}" id="navReview">Review Queue</a>
         <a href="{{ url_for('routes.reports_view') }}" class="nav-link {% if active_page == 'reports' %}active{% endif %}" id="navReports">Reports</a>
         <a href="{{ url_for('routes.security_tests_view') }}" class="nav-link {% if active_page == 'security' %}active{% endif %}" id="navSecurity">Security</a>
+        <a href="{{ url_for('routes.overview_view') }}" class="nav-link {% if active_page == 'overview' %}active{% endif %}" id="navOverview">Architecture</a>
       </nav>
       {% endif %}
     </div>

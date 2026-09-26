@@ -331,6 +331,23 @@ def generate_all_plans_and_evidence():
             "compared_items": len(val_report.comparison_table)
         })
 
+    # 5. Populate Initial Manual Review Queue Items for Demonstration & Auditing
+    manual_reviews_seed = [
+        ("REV-001", "PLAN-SEC-EMP-005", "OnboardingPlan", "PLAN-SEC-EMP-005", "Policy Contradiction: FAQ vs Approved SOP", "High", "Pending"),
+        ("REV-002", "PLAN-FDE-EMP-006", "OnboardingPlan", "PLAN-FDE-EMP-006", "Missing Mandatory Requirement: Airspace Coordination", "Medium", "Pending"),
+        ("REV-003", "PLAN-DPS-EMP-009", "OnboardingPlan", "PLAN-DPS-EMP-009", "Ungrounded Vendor SLA Reference", "Medium", "Pending")
+    ]
+    for rev_id, p_id, itype, item_id, flag_r, sev, stat in manual_reviews_seed:
+        execute_commit(
+            """
+            INSERT INTO manual_reviews (
+                review_id, plan_id, item_type, item_id, flag_reason, severity, status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(review_id) DO NOTHING
+            """,
+            (rev_id, p_id, itype, item_id, flag_r, sev, stat)
+        )
+
     print(f"Generated complete plans for all 10 roles. Total compared requirement items: {total_compared_items} (Target: >=100).")
 
     # Write summary evidence to reports/

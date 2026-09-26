@@ -15,23 +15,23 @@
 
 <!-- Matrix Workspace Filters -->
 <div class="card-3d" style="margin-bottom: 20px; padding: 16px 20px;">
-  <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
-    <input type="text" id="tableSearchInput" class="form-input" style="max-width: 280px;" placeholder="Search requirement or code...">
+  <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+    <input type="text" id="tableSearchInput" class="form-input" style="flex: 1 1 220px; min-width: 160px;" placeholder="Search requirement or code...">
 
-    <select class="form-select table-filter" data-filter-key="role" style="max-width: 240px;">
+    <select class="form-select table-filter" data-filter-key="role" style="flex: 1 1 200px; min-width: 160px;">
       <option value="ALL">All Job Roles (10 Roles)</option>
       {% for r in roles %}
       <option value="{{ r.title }}" {% if selected_role == r.role_id %}selected{% endif %}>{{ r.title }}</option>
       {% endfor %}
     </select>
 
-    <select class="form-select table-filter" data-filter-key="mandatory" style="max-width: 170px;">
+    <select class="form-select table-filter" data-filter-key="mandatory" style="flex: 1 1 140px; min-width: 120px;">
       <option value="ALL">All Statuses</option>
       <option value="MANDATORY">Mandatory Only</option>
       <option value="OPTIONAL">Optional / Recommended</option>
     </select>
 
-    <select class="form-select table-filter" data-filter-key="stage" style="max-width: 160px;">
+    <select class="form-select table-filter" data-filter-key="stage" style="flex: 1 1 140px; min-width: 120px;">
       <option value="ALL">All Stages</option>
       <option value="Day 1">Day 1</option>
       <option value="Week 1">Week 1</option>

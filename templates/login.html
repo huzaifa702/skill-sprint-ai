@@ -3,15 +3,35 @@
 {% block title %}Sign In | SkillSprint AI{% endblock %}
 
 {% block content %}
-<div style="max-width: 440px; margin: 40px auto;">
-  <div class="card-3d" style="padding: 32px; border-top: 3px solid var(--accent-primary);">
-    <div style="text-align: center; margin-bottom: 24px;">
+<div style="max-width: 460px; width: 100%; margin: 28px auto; padding: 0 14px; box-sizing: border-box;">
+  <div class="card-3d" style="padding: clamp(20px, 5vw, 32px); border-top: 3px solid var(--accent-primary); width: 100%; box-sizing: border-box;">
+    <div style="text-align: center; margin-bottom: 20px;">
       <div class="brand-logo-3d" style="margin: 0 auto 12px auto; width: 44px; height: 44px; font-size: 20px;">S</div>
-      <h2 style="font-size: 20px; font-weight: 700; color: var(--text-primary);">SkillSprint AI Authentication</h2>
-      <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Role-Based Access Control</p>
+      <h2 style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">SkillSprint AI</h2>
+      <p style="font-size: 13px; color: var(--text-secondary);">Enterprise Security &amp; Access Gate</p>
     </div>
 
-    <form action="{{ url_for('auth.login_view') }}" method="POST">
+    <!-- Security Notice & Admin Password Badge -->
+    <div style="background: rgba(199, 243, 107, 0.05); border: 1px solid rgba(199, 243, 107, 0.25); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--accent-primary); font-size: 13px; margin-bottom: 6px;">
+        <span>🔒</span> Mandatory Password Authentication
+      </div>
+      <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 8px 0; line-height: 1.4;">
+        Platform access is strictly gated. Please sign in with your enterprise credentials:
+      </p>
+      <div style="background: var(--bg-primary); border: 1px solid var(--border-subtle); padding: 8px 10px; border-radius: 4px; font-size: 11px; font-family: var(--font-mono); color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
+        <div style="display: flex; justify-content: space-between;">
+          <span>Admin Username:</span>
+          <strong style="color: var(--accent-secondary);">admin</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Admin Password:</span>
+          <strong style="color: var(--accent-primary);">Admin@12345!</strong>
+        </div>
+      </div>
+    </div>
+
+    <form id="mainLoginForm" action="{{ url_for('auth.login_view') }}" method="POST">
       <div class="form-group">
         <label class="form-label" for="username">Username</label>
         <input type="text" id="username" name="username" class="form-input" placeholder="e.g. admin or training_mgr" required autofocus>
@@ -22,46 +42,52 @@
         <input type="password" id="password" name="password" class="form-input" placeholder="••••••••••••" required>
       </div>
 
-      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px; margin-top: 8px;" id="loginSubmitBtn">
-        Sign In
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px; margin-top: 8px; justify-content: center;" id="loginSubmitBtn">
+        Sign In with Password
       </button>
     </form>
 
-    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-subtle);">
-      <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 10px;">
-        Evaluator Quick Logins (1-Click)
+    <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-subtle);">
+      <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <span>Evaluator Quick-Fill Credentials</span>
+        <span style="font-size: 10px; color: var(--accent-primary);">Authenticates via Password</span>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 6px;">
-        <form action="{{ url_for('auth.fast_login') }}" method="POST">
-          <input type="hidden" name="role_name" value="Administrator">
-          <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;">
-            <span>Administrator (admin)</span>
-            <span class="role-badge">Admin</span>
-          </button>
-        </form>
-        <form action="{{ url_for('auth.fast_login') }}" method="POST">
-          <input type="hidden" name="role_name" value="Training Manager">
-          <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;">
-            <span>Training Manager (training_mgr)</span>
-            <span class="role-badge">Curriculum</span>
-          </button>
-        </form>
-        <form action="{{ url_for('auth.fast_login') }}" method="POST">
-          <input type="hidden" name="role_name" value="Reviewer">
-          <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;">
-            <span>Reviewer (reviewer)</span>
-            <span class="role-badge">Auditor</span>
-          </button>
-        </form>
-        <form action="{{ url_for('auth.fast_login') }}" method="POST">
-          <input type="hidden" name="role_name" value="Employee">
-          <button type="submit" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;">
-            <span>Employee (employee)</span>
-            <span class="role-badge">Learner</span>
-          </button>
-        </form>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;" onclick="autofillLogin('admin', 'Admin@12345!')">
+          <span>Administrator (admin)</span>
+          <span class="role-badge">Admin</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;" onclick="autofillLogin('training_mgr', 'Train@12345!')">
+          <span>Training Manager (training_mgr)</span>
+          <span class="role-badge">Curriculum</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;" onclick="autofillLogin('reviewer', 'Review@12345!')">
+          <span>Reviewer (reviewer)</span>
+          <span class="role-badge">Auditor</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: space-between;" onclick="autofillLogin('employee', 'Employ@12345!')">
+          <span>Employee (employee)</span>
+          <span class="role-badge">Learner</span>
+        </button>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+function autofillLogin(u, p) {
+  const uInput = document.getElementById('username');
+  const pInput = document.getElementById('password');
+  const form = document.getElementById('mainLoginForm');
+  if (uInput && pInput && form) {
+    uInput.value = u;
+    pInput.value = p;
+    // Highlight inputs momentarily for user clarity
+    uInput.style.borderColor = 'var(--accent-primary)';
+    pInput.style.borderColor = 'var(--accent-primary)';
+    // Submit through password verification gate
+    form.submit();
+  }
+}
+</script>
 {% endblock %}

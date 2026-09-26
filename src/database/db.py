@@ -140,16 +140,19 @@ def init_db(force_recreate: bool = False):
         except Exception:
             pass
 
-    if force_recreate and os.path.exists(db_path):
-        try:
-            os.remove(db_path)
-        except Exception:
-            pass
-
     with open(SCHEMA_PATH, "r", encoding="utf-8") as f:
         schema_sql = f.read()
 
     with get_db_connection() as conn:
+        if force_recreate:
+            conn.execute("PRAGMA foreign_keys = OFF;")
+            cur = conn.cursor()
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            tables = [r["name"] if isinstance(r, dict) else r[0] for r in cur.fetchall()]
+            for t in tables:
+                if not t.startswith("sqlite_"):
+                    cur.execute(f"DROP TABLE IF EXISTS {t};")
+            conn.execute("PRAGMA foreign_keys = ON;")
         conn.executescript(schema_sql)
 
 

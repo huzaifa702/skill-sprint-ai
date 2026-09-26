@@ -14,8 +14,12 @@
       <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
         SkillSprint AI analyzes organizational documents to generate personalized, role-specific employee onboarding plans using Generative AI, then independently verifies every generated module, task, and quiz question using deterministic Python business rules.
       </p>
-      <div style="display: flex; gap: 12px; align-items: center;">
-        <a href="{{ url_for('auth.login_view') }}" class="btn btn-primary" id="landingSignInBtn">Enter Evaluation Workspace</a>
+      <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        {% if g.current_user %}
+        <a href="{{ url_for('routes.dashboard_view') }}" class="btn btn-primary" id="landingSignInBtn">Go to Executive Dashboard &rarr;</a>
+        {% else %}
+        <a href="{{ url_for('auth.login_view') }}" class="btn btn-primary" id="landingSignInBtn">Sign In with Password &rarr;</a>
+        {% endif %}
         <a href="#pipeline-architecture" class="btn btn-secondary">Explore Dual-Pipeline Engine</a>
       </div>
     </div>

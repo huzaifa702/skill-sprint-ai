@@ -23,7 +23,7 @@
   </div>
 
   <!-- Test Scenarios Grid -->
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 16px;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px;">
     {% for test in security_tests %}
     <div class="card-3d" id="test-card-{{ test.test_id }}" style="border-top: 2px solid {% if test.category == 'Prompt Injection' %}var(--status-critical){% elif test.category == 'Precedence' %}var(--accent-secondary){% else %}var(--status-warning){% endif %};">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">

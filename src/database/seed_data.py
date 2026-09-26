@@ -418,7 +418,7 @@ def seed_database():
             ("TMPL-ONBOARD-V1", "onboarding_generation", "v1.0",
              "Generate personalized, role-specific onboarding plans grounded in approved sources",
              "You are SkillSprint AI Enterprise Onboarding Generation Engine.",
-             "GENERATE ONBOARDING PLAN FOR {employee_name}", "OnboardingPlanSchema")
+              "GENERATE ONBOARDING PLAN FOR {employee_name}", "OnboardingPlanSchema")
         )
 
     print("Database seeding completed successfully.")
