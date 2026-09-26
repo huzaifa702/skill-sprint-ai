@@ -9,11 +9,26 @@ from pathlib import Path
 # Base Paths
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SRC_DIR = BASE_DIR / "src"
-UPLOAD_DIR = BASE_DIR / "sample_documents"
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+is_serverless = bool(
+    os.environ.get("VERCEL")
+    or os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
+    or (os.path.exists("/tmp") and not os.access(str(BASE_DIR), os.W_OK))
+)
+
+if is_serverless:
+    UPLOAD_DIR = Path("/tmp/sample_documents")
+else:
+    UPLOAD_DIR = BASE_DIR / "sample_documents"
+
+try:
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    pass
 
 # Database
-DB_PATH = os.environ.get("SKILLSPRINT_DB_PATH", str(BASE_DIR / "skillsprint.db"))
+from src.database.db import resolve_db_path
+DB_PATH = resolve_db_path()
 
 # Security
 SECRET_KEY = os.environ.get("SKILLSPRINT_SECRET_KEY", "dev-skillsprint-secret-key-change-in-production-2026")

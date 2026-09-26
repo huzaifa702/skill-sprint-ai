@@ -906,7 +906,11 @@ body {
       {% endif %}
     {% endwith %}
 
-    {% block content %}{% endblock %}
+    {% if content_override %}
+      {{ content_override|safe }}
+    {% else %}
+      {% block content %}{% endblock %}
+    {% endif %}
   </main>
 
   <footer style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-subtle); padding: 16px 24px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">

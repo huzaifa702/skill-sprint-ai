@@ -34,8 +34,11 @@ def login_view():
             session["username"] = user["username"]
             session["role_name"] = user["role_name"]
 
-            # Update last login
-            execute_commit("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?", (user["user_id"],))
+            # Update last login safely
+            try:
+                execute_commit("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?", (user["user_id"],))
+            except Exception:
+                pass
 
             flash(f"Welcome back, {user['full_name']}!", "success")
             next_url = request.args.get("next")
@@ -46,10 +49,12 @@ def login_view():
     return render_template("login.html")
 
 
-@auth_bp.route("/fast-login", methods=["POST"])
+@auth_bp.route("/fast-login", methods=["GET", "POST"])
 def fast_login():
     """1-Click evaluator fast login for competition judges."""
-    role_name = request.form.get("role_name", "Administrator")
+    role_name = request.form.get("role_name") or request.args.get("role_name") or "Administrator"
+    
+    # Try exact match by system role name
     user = query_one(
         """
         SELECT u.user_id, u.username, u.full_name, sr.name as role_name
@@ -61,10 +66,29 @@ def fast_login():
         (role_name,)
     )
 
+    # Fallback: match by username or substring
+    if not user:
+        user = query_one(
+            """
+            SELECT u.user_id, u.username, u.full_name, sr.name as role_name
+            FROM users u
+            JOIN system_roles sr ON u.system_role_id = sr.role_id
+            WHERE (u.username = ? OR sr.name LIKE ?) AND u.is_active = 1
+            LIMIT 1
+            """,
+            (role_name.lower(), f"%{role_name}%")
+        )
+
     if user:
         session["user_id"] = user["user_id"]
         session["username"] = user["username"]
         session["role_name"] = user["role_name"]
+
+        try:
+            execute_commit("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?", (user["user_id"],))
+        except Exception:
+            pass
+
         flash(f"Authenticated as {user['full_name']} ({user['role_name']})", "success")
         return redirect(url_for("routes.dashboard_view"))
 

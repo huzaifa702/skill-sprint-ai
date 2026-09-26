@@ -8,14 +8,59 @@ and parameterized execution helpers.
 
 import sqlite3
 import os
+import shutil
 from contextlib import contextmanager
 from typing import Any, Dict, List, Optional, Tuple
 
-DATABASE_PATH = os.environ.get(
-    "SKILLSPRINT_DB_PATH",
-    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "skillsprint.db")
-)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BUNDLED_DB = os.path.join(BASE_DIR, "skillsprint.db")
 SCHEMA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "schema.sql")
+
+
+def resolve_db_path() -> str:
+    """
+    Resolve the working SQLite database path.
+    On serverless platforms (e.g. Vercel, AWS Lambda), the deployment directory is read-only.
+    To support full write operations (audit logs, evaluations, user sessions, plan generation),
+    we copy the bundled SQLite database to /tmp/skillsprint.db if the local directory is read-only
+    or running inside Vercel.
+    """
+    env_path = os.environ.get("SKILLSPRINT_DB_PATH")
+    if env_path:
+        return env_path
+
+    # Detect serverless or read-only environment
+    is_serverless = bool(
+        os.environ.get("VERCEL")
+        or os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
+        or (os.path.exists("/tmp") and not os.access(BASE_DIR, os.W_OK))
+    )
+
+    if is_serverless:
+        tmp_db = "/tmp/skillsprint.db"
+        try:
+            # If tmp_db does not exist or bundled_db has content while tmp_db is empty, copy bundled
+            if not os.path.exists(tmp_db) or (
+                os.path.exists(BUNDLED_DB) and os.path.getsize(tmp_db) == 0
+            ):
+                if os.path.exists(BUNDLED_DB):
+                    shutil.copy2(BUNDLED_DB, tmp_db)
+            if os.path.exists(tmp_db):
+                return tmp_db
+        except Exception as e:
+            print(f"[SkillSprint DB] Failed to mirror database to /tmp: {e}")
+            if os.path.exists(BUNDLED_DB):
+                return BUNDLED_DB
+
+    return BUNDLED_DB
+
+
+DATABASE_PATH = resolve_db_path()
+
+
+def get_database_path() -> str:
+    """Return the currently active database path."""
+    return resolve_db_path()
 
 
 def dict_factory(cursor: sqlite3.Cursor, row: Tuple) -> Dict[str, Any]:
@@ -26,31 +71,80 @@ def dict_factory(cursor: sqlite3.Cursor, row: Tuple) -> Dict[str, Any]:
     return d
 
 
+_seeding_lock = False
+
+
 @contextmanager
 def get_db_connection():
-    """Context manager for SQLite database connection with row factory and FK enabled."""
-    conn = sqlite3.connect(DATABASE_PATH, timeout=30.0)
+    """Context manager for SQLite database connection with row factory and safe pragmas."""
+    global _seeding_lock
+    db_path = resolve_db_path()
+
+    # Self-heal: If database doesn't exist or is empty, copy from bundled or seed
+    if not _seeding_lock and (not os.path.exists(db_path) or os.path.getsize(db_path) == 0):
+        _seeding_lock = True
+        try:
+            if os.path.exists(BUNDLED_DB) and db_path != BUNDLED_DB:
+                shutil.copy2(BUNDLED_DB, db_path)
+            else:
+                from src.database.seed_data import seed_database
+                seed_database()
+        except Exception as err:
+            print(f"[SkillSprint DB] Auto-initialization error: {err}")
+        finally:
+            _seeding_lock = False
+
+    conn = sqlite3.connect(db_path, timeout=30.0)
     conn.row_factory = dict_factory
-    conn.execute("PRAGMA foreign_keys = ON;")
-    conn.execute("PRAGMA journal_mode = WAL;")
+
+    # Safe pragmas that don't crash if read-only or unsupported
+    try:
+        conn.execute("PRAGMA foreign_keys = ON;")
+    except Exception:
+        pass
+
+    try:
+        conn.execute("PRAGMA journal_mode = WAL;")
+    except Exception:
+        try:
+            conn.execute("PRAGMA journal_mode = DELETE;")
+        except Exception:
+            pass
+
     try:
         yield conn
-        conn.commit()
+        try:
+            conn.commit()
+        except Exception:
+            pass
     except Exception:
-        conn.rollback()
+        try:
+            conn.rollback()
+        except Exception:
+            pass
         raise
     finally:
-        conn.close()
+        try:
+            conn.close()
+        except Exception:
+            pass
 
 
 def init_db(force_recreate: bool = False):
     """Initialize database tables from schema.sql."""
-    db_dir = os.path.dirname(DATABASE_PATH)
+    db_path = resolve_db_path()
+    db_dir = os.path.dirname(db_path)
     if db_dir and not os.path.exists(db_dir):
-        os.makedirs(db_dir, exist_ok=True)
+        try:
+            os.makedirs(db_dir, exist_ok=True)
+        except Exception:
+            pass
 
-    if force_recreate and os.path.exists(DATABASE_PATH):
-        os.remove(DATABASE_PATH)
+    if force_recreate and os.path.exists(db_path):
+        try:
+            os.remove(db_path)
+        except Exception:
+            pass
 
     with open(SCHEMA_PATH, "r", encoding="utf-8") as f:
         schema_sql = f.read()

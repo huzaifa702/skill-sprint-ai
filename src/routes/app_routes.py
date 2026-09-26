@@ -48,35 +48,65 @@ def landing_view():
 @login_required
 def dashboard_view():
     """Executive intelligence dashboard with live metrics and recent plans."""
-    total_emp = query_one("SELECT count(*) as c FROM employees")["c"]
-    total_docs = query_one("SELECT count(*) as c FROM documents WHERE status = 'Active'")["c"]
-    total_reqs = query_one("SELECT count(*) as c FROM requirements")["c"]
-    mand_reqs = query_one("SELECT count(*) as c FROM requirements WHERE is_mandatory = 1")["c"]
-    pending_reviews = query_one("SELECT count(*) as c FROM manual_reviews WHERE status = 'Pending'")["c"]
+    try:
+        emp_res = query_one("SELECT count(*) as c FROM employees")
+        total_emp = emp_res["c"] if emp_res and "c" in emp_res else 0
+    except Exception:
+        total_emp = 0
 
-    recent_plans = query_all(
-        """
-        SELECT op.*, e.first_name, e.last_name, jr.title as role_title
-        FROM onboarding_plans op
-        JOIN employees e ON op.employee_id = e.employee_id
-        JOIN job_roles jr ON op.job_role_id = jr.role_id
-        ORDER BY op.created_at DESC
-        LIMIT 10
-        """
-    )
+    try:
+        doc_res = query_one("SELECT count(*) as c FROM documents WHERE status = 'Active'")
+        total_docs = doc_res["c"] if doc_res and "c" in doc_res else 0
+    except Exception:
+        total_docs = 0
 
-    roles_summary = query_all(
-        """
-        SELECT jr.role_id, jr.code, jr.title, d.name as dept_name,
-               COUNT(rm.requirement_id) as total_reqs,
-               SUM(CASE WHEN rm.mandatory_for_role = 1 THEN 1 ELSE 0 END) as mandatory_count
-        FROM job_roles jr
-        JOIN departments d ON jr.dept_id = d.dept_id
-        LEFT JOIN role_requirements rm ON jr.role_id = rm.job_role_id
-        GROUP BY jr.role_id
-        ORDER BY jr.title ASC
-        """
-    )
+    try:
+        req_res = query_one("SELECT count(*) as c FROM requirements")
+        total_reqs = req_res["c"] if req_res and "c" in req_res else 0
+    except Exception:
+        total_reqs = 0
+
+    try:
+        mand_res = query_one("SELECT count(*) as c FROM requirements WHERE is_mandatory = 1")
+        mand_reqs = mand_res["c"] if mand_res and "c" in mand_res else 0
+    except Exception:
+        mand_reqs = 0
+
+    try:
+        rev_res = query_one("SELECT count(*) as c FROM manual_reviews WHERE status = 'Pending'")
+        pending_reviews = rev_res["c"] if rev_res and "c" in rev_res else 0
+    except Exception:
+        pending_reviews = 0
+
+    try:
+        recent_plans = query_all(
+            """
+            SELECT op.*, e.first_name, e.last_name, jr.title as role_title
+            FROM onboarding_plans op
+            JOIN employees e ON op.employee_id = e.employee_id
+            JOIN job_roles jr ON op.job_role_id = jr.role_id
+            ORDER BY op.created_at DESC
+            LIMIT 10
+            """
+        )
+    except Exception:
+        recent_plans = []
+
+    try:
+        roles_summary = query_all(
+            """
+            SELECT jr.role_id, jr.code, jr.title, d.name as dept_name,
+                   COUNT(rm.requirement_id) as total_reqs,
+                   SUM(CASE WHEN rm.mandatory_for_role = 1 THEN 1 ELSE 0 END) as mandatory_count
+            FROM job_roles jr
+            JOIN departments d ON jr.dept_id = d.dept_id
+            LEFT JOIN role_requirements rm ON jr.role_id = rm.job_role_id
+            GROUP BY jr.role_id
+            ORDER BY jr.title ASC
+            """
+        )
+    except Exception:
+        roles_summary = []
 
     metrics = {
         "total_employees": total_emp,
