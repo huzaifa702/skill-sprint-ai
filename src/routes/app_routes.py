@@ -612,7 +612,7 @@ def review_queue_view():
 @roles_required("Administrator", "Reviewer", "Training Manager")
 def review_decision_api(review_id):
     """Submit human review decision (Approve, Reject, Regenerate, Edit)."""
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
     action = data.get("action", "Approve")
     comments = data.get("comments", "").strip()
 
