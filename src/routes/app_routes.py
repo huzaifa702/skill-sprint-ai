@@ -539,6 +539,7 @@ def plan_detail_view(plan_id):
 
 
 @routes_bp.route("/onboarding/plan/<plan_id>/comparison")
+@routes_bp.route("/comparison/<plan_id>")
 @login_required
 def comparison_view(plan_id):
     """Side-by-side Dual-Pipeline comparison workspace."""
@@ -589,6 +590,7 @@ def export_plan_audit(plan_id):
 # 6. Manual Review Queue & Reviewer Overrides
 # -------------------------------------------------------------
 @routes_bp.route("/review-queue")
+@routes_bp.route("/review")
 @login_required
 def review_queue_view():
     """Human review console with reviewer decision triggers."""
